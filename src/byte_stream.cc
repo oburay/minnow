@@ -32,7 +32,7 @@ void Writer::close()
 
 bool Writer::is_closed() const
 {
-  return {}; // Your code here.
+  return state_; // Your code here.
 }
 
 uint64_t Writer::available_capacity() const
