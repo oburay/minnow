@@ -27,6 +27,7 @@ void Writer::push( string data )
 void Writer::close()
 {
   // Your code here.
+  state_ = true;
 }
 
 bool Writer::is_closed() const
