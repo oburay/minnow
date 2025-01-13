@@ -42,7 +42,7 @@ uint64_t Writer::available_capacity() const
 
 uint64_t Writer::bytes_pushed() const
 {
-  return {}; // Your code here.
+  return pushed_ ; // Your code here.
 }
 
 string_view Reader::peek() const
