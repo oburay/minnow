@@ -53,6 +53,13 @@ string_view Reader::peek() const
 void Reader::pop( uint64_t len )
 {
   (void)len; // Your code here.
+
+  for ( uint64_t i = 0; i < len; i++ ) {
+    buffer_.pop();
+    capacity_++;
+    popped_++;
+    
+  }
 }
 
 bool Reader::is_finished() const
