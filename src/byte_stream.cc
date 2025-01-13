@@ -74,5 +74,5 @@ uint64_t Reader::bytes_buffered() const
 
 uint64_t Reader::bytes_popped() const
 {
-  return {}; // Your code here.
+  return  popped_; // Your code here.
 }
