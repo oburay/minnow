@@ -69,7 +69,7 @@ bool Reader::is_finished() const
 
 uint64_t Reader::bytes_buffered() const
 {
-  return {}; // Your code here.
+  return buffer_.size(); // Your code here.
 }
 
 uint64_t Reader::bytes_popped() const
