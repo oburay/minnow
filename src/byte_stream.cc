@@ -64,7 +64,7 @@ void Reader::pop( uint64_t len )
 
 bool Reader::is_finished() const
 {
-  return {}; // Your code here.
+  return ( ( buffer_.size() == 0 ) && ( state_ == true ) ) ? true : false ; // Your code here.
 }
 
 uint64_t Reader::bytes_buffered() const
