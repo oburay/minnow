@@ -10,12 +10,6 @@ void Writer::push( string data )
 {
   (void)data; // Your code here.
 
-  /* -----------------------------Pseudocode--------------------------
-   1. Check for available capacity in the byte stream and remaining characters in the data
-   2. Loop through each character in the data and push a character per iteration based on conditionalities above
-   3. Update variables for available capacity and cumulative number of bytes pushed into the byte stream
-  */ 
-
   data.resize(min(data.length(), available_capacity()));
   buffer_ += data ;
   pushed_ += data.length();
