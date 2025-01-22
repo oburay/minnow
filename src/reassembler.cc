@@ -89,8 +89,7 @@ if (track_count > 0) {
 // This function is for testing only; don't add extra state to support it.
 uint64_t Reassembler::count_bytes_pending() const
 {
-
-   uint64_t track_count{0};                                                         // Keeps count of the longest sequence of indexes filled starting from index 0
+ uint64_t track_count{0};                                                         // Keeps count of the longest sequence of indexes filled starting from index 0
   for (uint64_t i = 0; i < reassembler_track.size(); i++) {
         if(reassembler_track[i] == '1'){
             track_count ++ ;
@@ -102,5 +101,6 @@ uint64_t Reassembler::count_bytes_pending() const
   }
 
   return track_count;
+  
 }
 
