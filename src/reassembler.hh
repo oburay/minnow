@@ -43,9 +43,9 @@ public:
 
 private:
   ByteStream output_;
-  uint64_t next_index {0};
-  uint64_t last_index{0};
+  uint64_t next_index { 0 };
+  uint64_t last_index { 0 };
   std::string reassembler_buffer {};
   std::string reassembler_track {};
-  bool last_substring {false} ;
+  bool last_substring { false };
 };
