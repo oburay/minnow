@@ -1,13 +1,17 @@
 Checkpoint 1 Writeup
 ====================
 
-My name: [your name here]
+My name: OBU RAYMOND BUERNOR
 
-My SUNet ID: [your sunetid here]
+My SUNet ID: OBURAY
 
 I collaborated with: [list sunetids here]
 
 I would like to thank/reward these classmates for their help: [list sunetids here]
+
+TTL & Checksum where the differences
+
+**** I adopted part of Keith's code from checkpoint0 on how to approach the assignment using strings
 
 This lab took me about [n] hours to do. I [did/did not] attend the lab session.
 

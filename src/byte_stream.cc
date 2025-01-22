@@ -1,4 +1,5 @@
 #include "byte_stream.hh"
+#include "debug.hh"
 
 using namespace std;
 
@@ -8,20 +9,17 @@ ByteStream::ByteStream( uint64_t capacity ) : capacity_( capacity ), buffer_(), 
 void Writer::push( string data )
 {
   (void)data; // Your code here.
-  string byte;
 
   /* -----------------------------Pseudocode--------------------------
    1. Check for available capacity in the byte stream and remaining characters in the data
    2. Loop through each character in the data and push a character per iteration based on conditionalities above
    3. Update variables for available capacity and cumulative number of bytes pushed into the byte stream
   */ 
-  
-  for ( uint64_t i = 0; capacity_ > 0 && i < data.length(); i++ ) {
-    byte = data[i];
-    buffer_.push( byte );
-    capacity_--;
-    pushed_++;
-  }
+
+  data.resize(min(data.length(), available_capacity()));
+  buffer_ += data ;
+  pushed_ += data.length();
+
 }
 
 void Writer::close()
@@ -37,7 +35,7 @@ bool Writer::is_closed() const
 
 uint64_t Writer::available_capacity() const
 {
-  return  capacity_; // Your code here.
+  return  (capacity_ - buffer_.length()); // Your code here
 }
 
 uint64_t Writer::bytes_pushed() const
@@ -47,29 +45,26 @@ uint64_t Writer::bytes_pushed() const
 
 string_view Reader::peek() const
 {
-  return { buffer_.front() }; // Your code here.
+  return { buffer_ }; // Your code here.
 }
 
 void Reader::pop( uint64_t len )
 {
   (void)len; // Your code here.
+  buffer_ = buffer_.substr(len);
+  popped_ += len;
 
-  for ( uint64_t i = 0; i < len; i++ ) {
-    buffer_.pop();
-    capacity_++;
-    popped_++;
-    
-  }
 }
 
 bool Reader::is_finished() const
 {
-  return ( ( buffer_.size() == 0 ) && ( state_ == true ) ) ? true : false ; // Your code here.
+  return ( ( buffer_.empty() ) && ( state_ ) );  //? true : false ; // Your code here.
 }
 
 uint64_t Reader::bytes_buffered() const
 {
   return buffer_.size(); // Your code here.
+  
 }
 
 uint64_t Reader::bytes_popped() const

@@ -12,7 +12,7 @@ using namespace std;
 
 static constexpr size_t NREPS = 32;
 static constexpr size_t NSEGS = 128;
-static constexpr size_t MAX_SEG_LEN = 2048;
+static constexpr size_t MAX_SEG_LEN = 2048;   
 
 int main()
 {
@@ -27,7 +27,7 @@ int main()
       size_t offset = 0;
       for ( unsigned i = 0; i < NSEGS; ++i ) {
         const size_t size = 1 + ( rd() % ( MAX_SEG_LEN - 1 ) );
-        const size_t offs = min( offset, 1 + ( static_cast<size_t>( rd() ) % 1023 ) );
+        const size_t offs = min( offset, 1 + ( static_cast<size_t>( rd() ) % 1023 ) );   
         seq_size.emplace_back( offset - offs, size + offs );
         offset += size;
       }
