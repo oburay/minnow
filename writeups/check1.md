@@ -12,7 +12,7 @@ I collaborated with: [list sunetids here]
 I would like to credit/thank the course assistant Ashish Rao for his assistance in exploring possible data structures that could meet the performance requirements of the reassembler and thanks to Keith! for his insights on the complexity of my earlier implementation which involved using a character map, as an underlying factor to my performance issues with running the test for "reassembler_win".
 
 # ByteStream Update
-    I adopted part of Keith's code from checkpoint0 on how to approach the assignment using strings to update my bytestream from a queue to a string, for performance purposes
+    I adopted part of Keith's code from our lab session on 15/01/2025 from checkpoint0 on how to approach the assignment using strings to update my bytestream from a queue to a string, for performance purposes
 
 # 2.0 Hands-on component: a private network for the class
 ## 2.1.4a
