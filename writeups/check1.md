@@ -11,6 +11,9 @@ I collaborated with: [list sunetids here]
 
 I would like to credit/thank the course assistant Ashish Rao for his assistance in exploring possible data structures that could meet the performance requirements of the reassembler and thanks to Keith! for his insights on the complexity of my earlier implementation which involved using a character map, as an underlying factor to my performance issues with running the test for "reassembler_win".
 
+# ByteStream Update
+    I adopted part of Keith's code from checkpoint0 on how to approach the assignment using strings to update my bytestream from a queue to a string, for performance purposes
+
 # 2.0 Hands-on component: a private network for the class
 ## 2.1.4a
     Using the "killall -QUIT ping" command while exchanging echo requests and responses using the ping utility, the average round-trip delay between when my VM sends an “echo request” and when it receives an “echo reply” from your groupmate’s VM (10.144.0.136) was 19.370 ms.
@@ -35,11 +38,8 @@ I would like to credit/thank the course assistant Ashish Rao for his assistance 
  
 
 
+    
 
-
-TTL & Checksum where the differences
-
-**** I adopted part of Keith's code from checkpoint0 on how to approach the assignment using strings
 
 This lab took me about [n] hours to do. I [did/did not] attend the lab session.
 
