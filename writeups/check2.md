@@ -7,7 +7,7 @@ My SUNet ID: OBURAY
 
 I collaborated with: Lara Franciulli (larafranciulli) , Thanawan Atchariyachanvanit (thanawan)
 
-I would like to credit/thank my lab mates I collaborated with Lara Franciulli(larafranciulli) and Thanawan Atchariyachanvanit (thanawan) for helping explain how unwrap should operate, which guided my implementation choices. 
+I would like to credit/thank my lab mates I collaborated with Lara Franciulli(larafranciulli) and Thanawan Atchariyachanvanit (thanawan) for helping explain how unwrap and TCPReceiver::receive should operate, which guided my implementation choices.
 
 This lab took me about 25 hours to do. I did attend the lab session.
 
