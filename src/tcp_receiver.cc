@@ -24,8 +24,6 @@ if(ISN) {
    Wrap32 seqno = (message.SYN ? (message.seqno + 1) : message.seqno);
   uint64_t stream_index = seqno.unwrap(zero_point.value(),reassembler_.next_index) - 1;
   reassembler_.insert(stream_index, message.payload, message.FIN);
-
-
   return;
 }
  
@@ -33,6 +31,17 @@ if(ISN) {
 
 TCPReceiverMessage TCPReceiver::send() const
 {
+   TCPReceiverMessage message {} ;
+  
+  // Include ackno if initial sequenece number is known
+  if (ISN) {
+      
+      message.ackno = ( reassembler_.writer().is_closed() ? Wrap32::wrap((reassembler_.next_index + 2), zero_point.value()) : Wrap32::wrap((reassembler_.next_index + 1), zero_point.value()) );
+     
+     }
 
-return {}
+    message.window_size = min(static_cast<int>(reassembler_.writer().available_capacity()), UINT16_MAX );
+    message.RST =(reassembler_.reader().has_error() ? true : false );
+    
+  return message ;
 }
