@@ -28,5 +28,6 @@ public:
 
 private:
   Reassembler reassembler_;
- 
+  bool ISN{false} ;
+  std::optional<Wrap32> zero_point {};
 };
