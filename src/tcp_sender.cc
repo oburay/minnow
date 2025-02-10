@@ -73,12 +73,54 @@ TCPSenderMessage TCPSender::make_empty_message() const
 
 void TCPSender::receive( const TCPReceiverMessage& msg )
 {
-  
+  (void)msg;
 
-  
+  if ( msg.RST ) {
+    reader().set_error();
+    return;
+  }
+
+  empty_window = ( msg.window_size == 0 ) ? true : false;
+  window_size = ( msg.window_size == 0 ) ? 1 : msg.window_size;
+
+  // Stream has started so check for valid ackno
+  if ( ( ( ( msg.ackno->unwrap( isn_, reader().bytes_popped() ) )
+           <= ( ( stream_ended ) ? ( reader().bytes_popped() + 2 ) : ( reader().bytes_popped() + 1 ) ) ) ) ) {
+
+//if (  ( msg.ackno->unwrap( isn_, reader().bytes_popped() ) )  <=  next_stream_index ) {
+
+    // Pick each segment and compare with ackno
+    // while (!oustandings.empty()) {
+    for ( auto seg : oustandings ) {
+      auto& segment = oustandings.front();
+      if ( ( segment.seqno.unwrap( isn_, reader().bytes_popped() ) + segment.sequence_length() )
+           <= ( msg.ackno->unwrap( isn_, reader().bytes_popped() ) ) ) {
+
+        oustandings.erase( oustandings.begin() );
+        number_rtx = 0;
+        cummulative_time = 0;
+
+      } else {
+        break;
+      }
+    }
+  }
 }
 
 void TCPSender::tick( uint64_t ms_since_last_tick, const TransmitFunction& transmit )
 {
-  
+  (void)transmit;
+
+  cummulative_time = ( !oustandings.empty() ) ? cummulative_time + ms_since_last_tick : 0;
+
+  if ( ( cummulative_time >= initial_RTO_ms_ * pow( 2, number_rtx ) ) && ( !oustandings.empty() ) ) {
+
+    transmit( oustandings[0] );
+    cummulative_time = 0;
+    number_rtx = empty_window ? number_rtx : number_rtx + 1;
+  }
+
+  else if ( ( cummulative_time >= initial_RTO_ms_ * pow( 2, number_rtx ) ) && ( oustandings.empty() ) ) {
+    cummulative_time = 0;
+  }
 }
