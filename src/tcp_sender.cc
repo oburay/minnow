@@ -62,7 +62,13 @@ void TCPSender::push( const TransmitFunction& transmit )
 
 TCPSenderMessage TCPSender::make_empty_message() const
 {
-  
+  TCPSenderMessage message {};
+  message.seqno = isn_ + next_stream_index;
+  message.SYN = false;
+  message.payload = "";
+  message.FIN = false;
+  message.RST = ( reader().has_error() ? true : false );
+  return message;
 }
 
 void TCPSender::receive( const TCPReceiverMessage& msg )
