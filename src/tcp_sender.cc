@@ -19,7 +19,7 @@ uint64_t TCPSender::sequence_numbers_in_flight() const
 // This function is for testing only; don't add extra state to support it.
 uint64_t TCPSender::consecutive_retransmissions() const
 {
-  
+  return number_rtx;
 }
 
 void TCPSender::push( const TransmitFunction& transmit )
