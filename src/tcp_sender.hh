@@ -5,6 +5,7 @@
 #include "tcp_sender_message.hh"
 
 #include <functional>
+#include <unordered_set>
 
 class TCPSender
 {
@@ -42,4 +43,12 @@ private:
   ByteStream input_;
   Wrap32 isn_;
   uint64_t initial_RTO_ms_;
+  // std::unordered_set<TCPSenderMessage> outstandings {};
+  std::vector<TCPSenderMessage> oustandings {};
+  uint16_t window_size { 1 };
+  bool stream_ended { false }; // replace with FIN_
+  uint64_t cummulative_time {};
+  uint64_t number_rtx { 0 };
+  uint64_t next_stream_index { 0 };
+  bool empty_window { false };
 };

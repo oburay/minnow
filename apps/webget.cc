@@ -1,4 +1,5 @@
-#include "socket.hh"
+// #include "socket.hh"
+#include "tcp_minnow_socket.hh"
 
 #include <cstdlib>
 #include <iostream>
@@ -27,7 +28,7 @@ void get_URL( const string& host, const string& path )
   host_ = "Host: ";
   end = "\r\n";
 
-  TCPSocket socket;
+  CS144TCPSocket socket;
   Address addr( host, protocol );
   socket.connect( addr );
   request = method + path + version + end;
@@ -43,6 +44,8 @@ void get_URL( const string& host, const string& path )
     socket.read( response );
     cout << response;
   }
+
+  socket.wait_until_closed();
 }
 
 int main( int argc, char* argv[] )

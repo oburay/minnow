@@ -41,7 +41,7 @@ public:
   // Access output stream writer, but const-only (can't write from outside)
   const Writer& writer() const { return output_.writer(); }
 
-  uint64_t next_index {0};
+  uint64_t next_index { 0 };
   bool last_substring { false };
 
 private:
@@ -49,5 +49,4 @@ private:
   uint64_t last_index { 0 };
   std::string reassembler_buffer {};
   std::string reassembler_track {};
-  
 };
