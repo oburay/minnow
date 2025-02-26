@@ -167,5 +167,27 @@ void NetworkInterface::recv_frame( EthernetFrame frame )
 void NetworkInterface::tick( const size_t ms_since_last_tick )
 {
  
+  // Keep track of current time
+  cummulative_time = cummulative_time + ms_since_last_tick ;
+
+  // Loop through internal data structure 
+  for (auto map = addressMapping.begin(); map != addressMapping.end(); ) {
+
+    // Pending ARP Request
+    if ((to_string(map->second.ethAddr) == "00:00:00:00:00:00") && ((cummulative_time - map->second.timestamp) >= 5000)) {
+      map = addressMapping.erase(map);
+    } 
+    
+    // Mappings cached for more than 30 secs
+    else if ((to_string(map->second.ethAddr) != "00:00:00:00:00:00") && ((cummulative_time - map->second.timestamp) >= 30000)) {
+       map = addressMapping.erase(map);
+    } 
+    
+
+    else{
+      ++map;
+    }
+  }
 }
+
 
