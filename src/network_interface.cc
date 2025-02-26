@@ -7,6 +7,8 @@
 #include "helpers.hh"
 #include "network_interface.hh"
 
+
+
 using namespace std;
 
 //! \param[in] ethernet_address Ethernet (what ARP calls "hardware") address of the interface
@@ -23,27 +25,72 @@ NetworkInterface::NetworkInterface( string_view name,
   cerr << "DEBUG: Network interface has Ethernet address " << to_string( ethernet_address_ ) << " and IP address "
        << ip_address.ip() << "\n";
 }
-
 //! \param[in] dgram the IPv4 datagram to be sent
 //! \param[in] next_hop the IP address of the interface to send it to (typically a router or default gateway, but
 //! may also be another host if directly connected to the same network as the destination) Note: the Address type
 //! can be converted to a uint32_t (raw 32-bit IP address) by using the Address::ipv4_numeric() method.
 void NetworkInterface::send_datagram( const InternetDatagram& dgram, const Address& next_hop )
 {
-  debug( "unimplemented send_datagram called" );
+  
   (void)dgram;
   (void)next_hop;
+  EthernetFrame frame ;
+  
+      // Check for existing IP record
+      if(addressMapping.find(next_hop.to_string()) != addressMapping.end()){
+          if (to_string(addressMapping[next_hop.to_string()].ethAddr) != "00:00:00:00:00:00"){ 
+          frame.payload = serialize(dgram);
+          frame.header.type =  EthernetHeader::TYPE_IPv4;
+          frame.header.src = ethernet_address_;
+         
+          frame.header.dst = addressMapping[next_hop.to_string()].ethAddr;
+            transmit(frame);
+          } 
+
+          // if ARP request already sent within last 5sec, then just cache the dgram
+          else 
+          {
+            addressMapping[next_hop.to_string()].outbound_datagrams.push(dgram);
+          }     
+    }
+
+    
+
+    else {
+      ARPMessage msg;
+      msg.sender_ethernet_address = ethernet_address_;
+      msg.sender_ip_address = ip_address_.ipv4_numeric();
+      msg.target_ip_address = next_hop.ipv4_numeric();
+      msg.opcode = msg.OPCODE_REQUEST;
+      
+      // push the datagram into the oustandings data struct
+      Data data_ = { EthernetAddress{}, std::queue<InternetDatagram>  {}, cummulative_time  };
+      data_.outbound_datagrams.push(dgram);
+      addressMapping[next_hop.to_string()]= data_;
+
+      // Send ARP Request
+      frame.header.type =  EthernetHeader::TYPE_ARP;
+      frame.header.src = ethernet_address_;
+      frame.header.dst = ETHERNET_BROADCAST;
+      frame.payload = serialize(msg);
+      
+      transmit(frame);
+    }
 }
 
 //! \param[in] frame the incoming Ethernet frame
 void NetworkInterface::recv_frame( EthernetFrame frame )
-{
-  debug( "unimplemented recv_frame called" );
-  (void)frame;
+{ 
+
+
+ 
+      
+
 }
 
 //! \param[in] ms_since_last_tick the number of milliseconds since the last call to this method
 void NetworkInterface::tick( const size_t ms_since_last_tick )
 {
-  debug( "unimplemented tick({}) called", ms_since_last_tick );
+ 
 }
+
