@@ -87,7 +87,7 @@ void TCPSender::receive( const TCPReceiverMessage& msg )
   if ( ( ( ( msg.ackno->unwrap( isn_, reader().bytes_popped() ) )
            <= ( ( stream_ended ) ? ( reader().bytes_popped() + 2 ) : ( reader().bytes_popped() + 1 ) ) ) ) ) {
 
-//if (  ( msg.ackno->unwrap( isn_, reader().bytes_popped() ) )  <=  next_stream_index ) {
+    // if (  ( msg.ackno->unwrap( isn_, reader().bytes_popped() ) )  <=  next_stream_index ) {
 
     // Pick each segment and compare with ackno
     // while (!oustandings.empty()) {

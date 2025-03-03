@@ -34,4 +34,15 @@ public:
 private:
   // The router's collection of network interfaces
   std::vector<std::shared_ptr<NetworkInterface>> interfaces_ {};
+  
+  // Struct
+  struct Route_entry {
+    uint8_t prefix_length_ ;
+    std::optional<Address> next_hop_;
+    size_t interface_num_ ;
+  };
+
+  // internal data struct
+  // key => route_prefix & value => route_entry
+  std::unordered_map<uint32_t, Route_entry> routing_table;
 };
