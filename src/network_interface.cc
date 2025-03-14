@@ -78,6 +78,10 @@ void NetworkInterface::send_datagram( const InternetDatagram& dgram, const Addre
 void NetworkInterface::recv_frame( EthernetFrame frame )
 {
 
+  EthernetFrame msg_frame;
+  msg_frame.header.type = EthernetHeader::TYPE_IPv4;
+  msg_frame.header.src = ethernet_address_;
+
   if ( frame.header.dst == ethernet_address_ ) {
     debug( "ethernet condition" );
     // If frame is IPV4
@@ -98,11 +102,27 @@ void NetworkInterface::recv_frame( EthernetFrame frame )
         addressMapping[Address::from_ipv4_numeric( arp_msg.sender_ip_address ).to_string()].timestamp
           = cummulative_time; // update timestamp
 
-        EthernetFrame msg_frame;
-        msg_frame.header.type = EthernetHeader::TYPE_IPv4;
-        msg_frame.header.src = ethernet_address_;
         msg_frame.header.dst = arp_msg.sender_ethernet_address;
 
+        // For An ARP request, send an ARP Response
+        if ( arp_msg.opcode == ARPMessage::OPCODE_REQUEST ) {
+          // Create arp msg
+          ARPMessage response_msg;
+          response_msg.sender_ethernet_address = ethernet_address_;
+          response_msg.sender_ip_address = ip_address_.ipv4_numeric();
+          response_msg.target_ethernet_address = arp_msg.sender_ethernet_address;
+          response_msg.target_ip_address = arp_msg.sender_ip_address;
+          response_msg.opcode = response_msg.OPCODE_REPLY;
+
+          msg_frame.header.type = EthernetHeader::TYPE_ARP;
+          msg_frame.payload = serialize( response_msg );
+
+          transmit( msg_frame );
+        }
+
+        msg_frame.header.type = EthernetHeader::TYPE_IPv4;
+
+        // Send any outstanding datagram's for the arp's SRC IP
         while ( !addressMapping[Address::from_ipv4_numeric( arp_msg.sender_ip_address ).to_string()]
                    .outbound_datagrams.empty() ) {
           debug( "sending pending datagrams for this IP" );
@@ -126,9 +146,9 @@ void NetworkInterface::recv_frame( EthernetFrame frame )
 
     ARPMessage arp_msg;
 
+    bool good_arp = parse( arp_msg, frame.payload );
     // Check if broadcast is intended for my IP
-    if ( parse( arp_msg, frame.payload )
-         && Address::from_ipv4_numeric( arp_msg.target_ip_address ) == ip_address_ ) {
+    if ( good_arp && Address::from_ipv4_numeric( arp_msg.target_ip_address ) == ip_address_ ) {
 
       // Create arp msg
       ARPMessage response_msg;
@@ -147,10 +167,34 @@ void NetworkInterface::recv_frame( EthernetFrame frame )
 
       transmit( response_frame );
 
-      // learn from arp request
+      // learn from arp Broadcast request
       Data data_ = { EthernetAddress {}, std::queue<InternetDatagram> {}, cummulative_time };
       data_.ethAddr = arp_msg.sender_ethernet_address;
       addressMapping[Address::from_ipv4_numeric( arp_msg.sender_ip_address ).to_string()] = data_;
+    }
+
+    // learn from arp Broadcast request
+    addressMapping[Address::from_ipv4_numeric( arp_msg.sender_ip_address ).to_string()].ethAddr
+      = arp_msg.sender_ethernet_address;
+    addressMapping[Address::from_ipv4_numeric( arp_msg.sender_ip_address ).to_string()].timestamp
+      = cummulative_time; // update timestamp
+
+    // Update dst eth address
+    msg_frame.header.dst = arp_msg.sender_ethernet_address;
+    debug( "at this ppoint" );
+    // Send any outstanding datagram's for the arp's SRC IP
+    while ( !addressMapping[Address::from_ipv4_numeric( arp_msg.sender_ip_address ).to_string()]
+               .outbound_datagrams.empty() ) {
+      debug( "sending pending datagrams for this IP" );
+
+      // Get the payload and transmit
+      msg_frame.payload
+        = serialize( addressMapping[Address::from_ipv4_numeric( arp_msg.sender_ip_address ).to_string()]
+                       .outbound_datagrams.front() );
+      transmit( msg_frame );
+
+      // pop payload from outstandings
+      addressMapping[Address::from_ipv4_numeric( arp_msg.sender_ip_address ).to_string()].outbound_datagrams.pop();
     }
   }
 }
